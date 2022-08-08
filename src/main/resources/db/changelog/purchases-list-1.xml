@@ -1,0 +1,80 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1.1" author="adamdev">
+        <createSequence sequenceName="SEQ_BUYER" incrementBy="1" minValue="1" maxValue="999999"/>
+    </changeSet>
+
+    <changeSet id="1.2" author="adamdev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="BUYER"/>
+            </not>
+        </preConditions>
+        <createTable tableName="BUYER">
+            <column name="ID" type="BIGINT" defaultValue="nextval('SEQ_BUYER')">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="FIRST_NAME" type="VARCHAR(128)"/>
+            <column name="SECOND_NAME" type="VARCHAR(128)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.3" author="adamdev">
+        <createSequence sequenceName="SEQ_PRODUCTS" incrementBy="1" minValue="1" maxValue="999999"/>
+    </changeSet>
+
+    <changeSet id="1.4" author="adamdev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="PRODUCTS"/>
+            </not>
+        </preConditions>
+        <createTable tableName="PRODUCTS">
+            <column name="ID" type="BIGINT" defaultValue="nextval('SEQ_PRODUCTS')">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)"/>
+            <column name="PRICE" type="DECIMAL"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.5" author="adamdev">
+        <createSequence sequenceName="SEQ_PURCHASES" incrementBy="1" minValue="1" maxValue="999999"/>
+    </changeSet>
+
+    <changeSet id="1.6" author="adamdev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="PURCHASES"/>
+            </not>
+        </preConditions>
+        <createTable tableName="PURCHASES">
+            <column name="ID" type="BIGINT" defaultValue="nextval('SEQ_PURCHASES')">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="BUYER_ID" type="BIGINT"/>
+            <column name="PRODUCT_ID" type="BIGINT"/>
+            <column name="DATE_OF_PURCHASE" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.7" author="adamdev">
+        <addForeignKeyConstraint baseTableName="PURCHASES"
+                                 baseColumnNames="BUYER_ID"
+                                 constraintName="FK_PURCHASES_BUYER_ID"
+                                 referencedTableName="BUYER"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="1.8" author="adamdev">
+        <addForeignKeyConstraint baseTableName="PURCHASES"
+                                 baseColumnNames="PRODUCT_ID"
+                                 constraintName="FK_PURCHASES_PRODUCT_ID"
+                                 referencedTableName="PRODUCTS"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+</databaseChangeLog>
