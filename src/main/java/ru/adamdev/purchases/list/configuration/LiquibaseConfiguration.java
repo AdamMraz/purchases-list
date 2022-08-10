@@ -12,8 +12,9 @@ import ru.adamdev.purchases.list.exception.PurchasesListException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_MIGRATION_ERROR;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.TYPE_ERROR;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_CANNOT_CONNECT_DB;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_MIGRATION_ERROR;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.TYPE_ERROR;
 
 public class LiquibaseConfiguration {
 
@@ -23,15 +24,18 @@ public class LiquibaseConfiguration {
         try {
             initLiquibase();
         } catch (LiquibaseException | SQLException e) {
-            throw new PurchasesListException(TYPE_ERROR, MESSAGE_MIGRATION_ERROR);
+            throw new PurchasesListException(TYPE_ERROR, MESSAGE_MIGRATION_ERROR, e);
         }
     }
 
-    public static void initLiquibase() throws LiquibaseException, SQLException {
+    private static void initLiquibase() throws LiquibaseException, PurchasesListException, SQLException {
         Connection connection = JdbcConnection.getConnection();
+        if (connection == null) {
+            throw new PurchasesListException(TYPE_ERROR, MESSAGE_MIGRATION_ERROR + " " + MESSAGE_CANNOT_CONNECT_DB);
+        }
         Database database =
                 DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new liquibase.database.jvm.JdbcConnection(connection));
-        try (Liquibase liquibase = new liquibase.Liquibase(CHANGE_LOG_FILE, new ClassLoaderResourceAccessor(), database)){
+        try (Liquibase liquibase = new Liquibase(CHANGE_LOG_FILE, new ClassLoaderResourceAccessor(), database)){
             liquibase.update(new Contexts(), new LabelExpression());
         }
     }

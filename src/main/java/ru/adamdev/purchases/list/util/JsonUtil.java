@@ -3,14 +3,12 @@ package ru.adamdev.purchases.list.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sun.istack.internal.Nullable;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.jetbrains.annotations.Nullable;
+import org.apache.log4j.Logger;
 
 public class JsonUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(JsonUtil.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JsonUtil.class);
 
     @Nullable
     public static <T> String serialize(T t) {
@@ -22,7 +20,7 @@ public class JsonUtil {
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(t);
         } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, "Не удалось сериализовать объект");
+            LOGGER.warn("Не удалось сериализовать объект. " + e.getMessage());
         }
         return null;
     }
@@ -35,7 +33,7 @@ public class JsonUtil {
                     .build()
                     .readValue(json, clazz);
         } catch (JsonProcessingException e) {
-            LOGGER.log(Level.WARNING, "Не удалось десериализовать объект");
+            LOGGER.warn("Не удалось десериализовать объект. " + e.getMessage());
         }
         return null;
     }

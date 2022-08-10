@@ -1,0 +1,18 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2.1" author="adamdev">
+        <sqlFile path="/db/sql/2-1-PURCHASES-LIST-BUYER.sql"/>
+    </changeSet>
+
+    <changeSet id="2.2" author="adamdev">
+        <sqlFile path="/db/sql/2-2-PURCHASES-LIST-PRODUCTS.sql"/>
+    </changeSet>
+
+    <changeSet id="2.3" author="adamdev">
+        <sqlFile path="/db/sql/2-3-PURCHASES-LIST-PURCHASES.sql"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_CANNOT_READ_FILE;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.TYPE_ERROR;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_CANNOT_READ_FILE;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.TYPE_ERROR;
 import static ru.adamdev.purchases.list.constant.MethodType.SEARCH;
 import static ru.adamdev.purchases.list.constant.MethodType.STAT;
 
@@ -136,7 +136,7 @@ public class PurchasesListServiceImpl implements PurchasesListService {
             Integer badCustomers = criteria.getBadCustomers();
             List<BuyerEntity> buyerEntityList = new ArrayList<>();
             if (!ValidationUtil.isNullOrEmpty(lastName)) {
-                buyerEntityList.addAll(findByFirstName(lastName));
+                buyerEntityList.addAll(findBySecondName(lastName));
             } else if (!ValidationUtil.isNullOrEmpty(productName, minTime)) {
                 buyerEntityList.addAll(findByProductNameAndCount(productName, minTime));
             } else if (!ValidationUtil.isNullOrEmpty(minExpenses, maxExpenses)) {
@@ -149,8 +149,8 @@ public class PurchasesListServiceImpl implements PurchasesListService {
         return new Result(buyerList);
     }
 
-    private List<BuyerEntity> findByFirstName(String firstName) throws PurchasesListException {
-        return buyerDao.findByFirstName(firstName);
+    private List<BuyerEntity> findBySecondName(String secondName) throws PurchasesListException {
+        return buyerDao.findBySecondName(secondName);
     }
 
     private List<BuyerEntity> findByProductNameAndCount(String productName, Integer minCount) throws PurchasesListException {

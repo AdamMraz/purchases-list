@@ -9,32 +9,32 @@ import java.util.List;
 
 public class BuyerDao extends Dao<BuyerEntity> {
 
-    private static final String FIRST_NAME = "firstName";
+    private static final String SECOND_NAME = "secondName";
     private static final String NAME = "name";
     private static final String COUNT = "count";
     private static final String MIN_SUM = "minSum";
     private static final String MAX_SUM = "maxSum";
     private static final String LIMIT = "limit";
 
-    private final String WHERE_FIRST_NAME = " WHERE FIRST_NAME = :" + FIRST_NAME;
+    private final String WHERE_SECOND_NAME = " WHERE SECOND_NAME = :" + SECOND_NAME;
     private final String WHERE_PRODUCT_NAME_AND_COUNT = " WHERE (SELECT COUNT(*) FROM Purchases pu" +
-            " WHERE pu.buyer_id = " + SIMPLE_TABLE_NAME + "id AND pu.product_id =" +
+            " WHERE pu.buyer_id = " + SIMPLE_TABLE_NAME_WITH_POINT + "id AND pu.product_id =" +
             " (SELECT pr.id FROM products pr WHERE pr.name = :" + NAME + ")) >= :" + COUNT;
     private final String WHERE_SUM_BETWEEN = " WHERE" +
             " (SELECT COALESCE(SUM(pr.price), 0) FROM products pr WHERE pr.id IN" +
             " (SELECT pu.product_id FROM purchases pu" +
-            " WHERE pu.buyer_id = " + SIMPLE_TABLE_NAME + "id)) BETWEEN :" + MIN_SUM + " AND :" + MAX_SUM;
+            " WHERE pu.buyer_id = " + SIMPLE_TABLE_NAME_WITH_POINT + "id)) BETWEEN :" + MIN_SUM + " AND :" + MAX_SUM;
     private final String ORDER_BY_PURCHASES_WITH_LIMIT = " ORDER BY" +
-            " (SELECT COUNT(*) FROM purchases pu WHERE " + SIMPLE_TABLE_NAME + "id = pu.buyer_id) LIMIT :" + LIMIT;
+            " (SELECT COUNT(*) FROM purchases pu WHERE " + SIMPLE_TABLE_NAME_WITH_POINT + "id = pu.buyer_id) LIMIT :" + LIMIT;
 
     public BuyerDao() throws PurchasesListException {
         super(BuyerEntity.class);
     }
 
-    public List<BuyerEntity> findByFirstName(String firstName) throws PurchasesListException {
+    public List<BuyerEntity> findBySecondName(String secondName) throws PurchasesListException {
         return HibernateSessionFactoryUtil
-                .wrapSession(session -> session.createNativeQuery(selectAllNativePlusThis(WHERE_FIRST_NAME), tClass)
-                        .setParameter(FIRST_NAME, firstName)
+                .wrapSession(session -> session.createNativeQuery(selectAllNativePlusThis(WHERE_SECOND_NAME), tClass)
+                        .setParameter(SECOND_NAME, secondName)
                         .list());
     }
 

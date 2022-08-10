@@ -12,6 +12,11 @@ public class PurchasesListException extends Exception {
         this.type = type;
     }
 
+    public PurchasesListException(String type, String message, Throwable throwable) {
+        super(message, throwable);
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return type + " - " + getMessage();

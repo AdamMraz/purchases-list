@@ -1,5 +1,6 @@
 package ru.adamdev.purchases.list.util;
 
+import org.jetbrains.annotations.Nullable;
 import ru.adamdev.purchases.list.constant.MethodType;
 import ru.adamdev.purchases.list.exception.InputParamsException;
 import ru.adamdev.purchases.list.helper.PurchasesListExceptionWrapper;
@@ -11,16 +12,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_ILLEGAL_INPUT_FILE;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_ILLEGAL_OUTPUT_FILE_CREATE;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_ILLEGAL_PARAM;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.MESSAGE_ILLEGAL_TYPE;
-import static ru.adamdev.purchases.list.constant.ExceptionConstants.TYPE_ERROR;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_ILLEGAL_INPUT_FILE;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_ILLEGAL_OUTPUT_FILE_CREATE;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_ILLEGAL_PARAM;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.MESSAGE_ILLEGAL_TYPE;
+import static ru.adamdev.purchases.list.constant.ErrorConstants.TYPE_ERROR;
 
 public class ValidationUtil {
 
     private static final int ARGS_LENGTH = 3;
-    private static final PurchasesListExceptionWrapper EXCEPTION_WRAPPER = new PurchasesListExceptionWrapperImpl();
 
     public static boolean isNullOrEmpty(Object... o) {
         return Arrays.stream(o)
@@ -31,12 +31,15 @@ public class ValidationUtil {
         return o == null || (o instanceof String && ((String) o).isEmpty());
     }
 
-    public static InputParams validateInputParams(String[] args) {
-        File outputFile = EXCEPTION_WRAPPER.wrap(() -> prepareOutputFile(args));
-        return EXCEPTION_WRAPPER.wrap(() -> prepareInputParams(args[0], args[1], outputFile), outputFile, false);
+    public static InputParams validateInputParams(String[] args) throws InputParamsException {
+        if (args.length != ARGS_LENGTH) {
+            throw new InputParamsException(TYPE_ERROR, MESSAGE_ILLEGAL_PARAM);
+        }
+        return prepareInputParams(args[0], args[1], args[2]);
     }
 
-    private static InputParams prepareInputParams(String methodType, String inputFileName, File outputFile) throws InputParamsException {
+    private static InputParams prepareInputParams(String methodType, String inputFileName, String outputFileName) throws InputParamsException {
+        File outputFile = prepareOutputFile(outputFileName);
         MethodType methodType1 = Optional.ofNullable(MethodType.getMethodType(methodType))
                 .orElseThrow(() -> new InputParamsException(TYPE_ERROR, MESSAGE_ILLEGAL_TYPE));
         File inputFile = prepareInputFile(inputFileName);
@@ -55,13 +58,6 @@ public class ValidationUtil {
         return inputFile;
     }
 
-    private static File prepareOutputFile(String[] args) throws InputParamsException {
-        if (args.length != ARGS_LENGTH) {
-            throw new InputParamsException(TYPE_ERROR, MESSAGE_ILLEGAL_PARAM);
-        }
-        return prepareOutputFile(args[2]);
-    }
-
     private static File prepareOutputFile(String outputFileName) throws InputParamsException {
         File outputFile = new File(outputFileName);
         if (!outputFile.exists()) {
@@ -71,10 +67,11 @@ public class ValidationUtil {
             } catch (IOException e) {
                 creationSuccessful = false;
             }
-            if (creationSuccessful) {
+            if (!creationSuccessful) {
                 throw new InputParamsException(TYPE_ERROR, MESSAGE_ILLEGAL_OUTPUT_FILE_CREATE);
             }
         }
+        PurchasesListExceptionWrapperImpl.setOutputFile(outputFile);
         return outputFile;
     }
 }

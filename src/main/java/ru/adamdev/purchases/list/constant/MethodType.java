@@ -1,6 +1,6 @@
 package ru.adamdev.purchases.list.constant;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
